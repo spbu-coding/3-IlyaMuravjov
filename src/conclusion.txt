@@ -1,0 +1,24 @@
+Analytical solution of the problem:
+First step: https://www.wolframalpha.com/input/?i=solve+for+x1%2C+x2+%7Bx1%2Bx2%3D2%3B+x1%2B1.0001x2%3D2.0001%2Bdelta%7D
+Second step: https://www.wolframalpha.com/input/?i=solve+over+integers+sqrt%282%29*10000*0.0001%2F2%5En%3C%3D1e-6
+Result: `0.0001 / 2^21`
+
+===================================================================================================================
+
+The acceptable term deviation calculated with `double` data type is equal to `4.768372e-011`.
+This result matches the analytical result and therefore is correct.
+
+===================================================================================================================
+
+The acceptable term deviation calculated with `float` data type depends on a compiler and compilation flags.
+
+If MinGW compiler is used and no optimization flags are specified, the result is incorrect and is equal to `1.220703e-008`.
+The experiment fails because of `float` data type not having enough precision to tell the difference between `2.0001f + 1.220703e-008f` and `2.0001f`.
+Therefore, it is erroneously concluded that there is no difference, and deviating term by `1.220703e-008f` doesn't affect the solution of the system at all.
+
+If MinGW compiler is used and at least `-O1` flag is specified, the result is incorrect and is equal to `0`.
+In this case, the experiment fails because the compiler substitutes constants to optimize out intermediate computations, and by doing so, makes some computations more precise.
+The additional distance between reference and deviated solution, caused by them having different precision, happens to be greater than acceptable solution deviation.
+Because of it, every deviated solution is considered to deviate too much. Therefore, the experiment only terminates when the term deviation reaches `0`.
+
+In both cases, the result calculated with `float` data type is incorrect.
